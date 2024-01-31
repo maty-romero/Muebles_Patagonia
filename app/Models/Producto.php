@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Producto extends Model
 {
-    use HasFactory;
-
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         "nombre_producto",
@@ -64,6 +64,8 @@ class Producto extends Model
         //Revisar si trae la oferta de mayor prioridad y qu esté activa
         if (isset($this->oferta[0])) {
             return $this->precio_producto * ((100 - $this->oferta[0]->porcentaje_descuento) / 100);
+        } else if (isset($this->ofertaTipoValida()[0])) {
+            return $this->precio_producto * ((100 - $this->ofertaTipoValida()[0]->porcentaje_descuento) / 100);
         } else {
             return $this->precio_producto;
         }
@@ -99,6 +101,19 @@ class Producto extends Model
             ->where('fecha_inicio_oferta', '<=', $today)
             ->where('fecha_fin_oferta', '>=', $today);
     }
+
+    public function ofertaTipoValida()
+    {
+        $today = date("Y-m-d");
+        $oferta = Oferta::leftJoin('ofertas_tipos_muebles', 'ofertas.id', '=', 'ofertas_tipos_muebles.id_oferta_tipo')
+            ->where('ofertas_tipos_muebles.id_tipo_mueble', '=', $this->id_tipo_mueble)
+            ->whereDate('ofertas.fecha_inicio_oferta', '<=', $today)
+            ->whereDate('ofertas.fecha_fin_oferta', '>=', $today)
+            ->get();
+
+        return $oferta;
+    }
+
 
     public function tieneOfertaCombo(): bool
     {

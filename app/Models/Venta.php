@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use stdClass;
 
 class Venta extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     //campos solicitados al momento de enviar el request
     protected $fillable = [
@@ -54,7 +54,7 @@ class Venta extends Model
 
     public function cliente(): BelongsTo
     {
-        return $this->belongsTo(Cliente::class, 'id_usuario_cliente');
+        return $this->belongsTo(Cliente::class, 'id_usuario_cliente')->withTrashed();
     }
 
     public static function calcularSubtotal()
@@ -70,14 +70,16 @@ class Venta extends Model
                 }
             }
             $ofertaMonto = OfertaMonto::getOfertaMonto($subtotal);
-            $descuento = 0;
             $request = new Request();
             $request->setLaravelSession(session());
             $request->session()->put('ofertaMonto', $ofertaMonto);
+            /*
+            $descuento = 0;
             if (isset($ofertaMonto)) {
                 $descuento = $ofertaMonto->porcentaje_descuento;
             }
             $subtotal = $subtotal * (1 - $descuento / 100);
+            */
         }
         return $subtotal;
     }
