@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+    /* PANTALLA CLIENTE*/
+    --primary-colorCliente: #FFE794;
+
+    /*Card cliente*/
+    --productType-card: #B3B3B3;
+    --productPrice-card: #5690FF; 
+    --hover-color:
+    
+    
+    /* PANTALLA ADMINISTRADOR*/
+    --primary-colorAdmin: #F0F0F0;
+    --sidebar-colorAdmin: #343B53;
+
+    background-color: url("../../public/images/pattern/Mask_group.svg");
+}
+
+
+.card-layer{
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease; /* Transición suave */
+    font-size: 1.7rem;
+    background-color: #5690FF;
+     
+}
+
+.card-layer:hover {
+    opacity: 1;
+ } 
+
+.filter-no-style{
+    border: unset;
+    padding-top: 0;
+    padding-bottom: 0;
+    cursor: pointer;
+}
